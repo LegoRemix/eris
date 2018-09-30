@@ -22,7 +22,7 @@ defmodule Eris.MixProject do
   defp deps do
     [ {:poison, "~> 3.1"},
       {:httpoison, "~> 1.0"},
-      {:ok, "~> 2.0"}
+      {:ok, "~> 2.0"},
     ]
   end
 end
