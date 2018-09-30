@@ -1,7 +1,11 @@
 defmodule Eris do
   @moduledoc """
-  Documentation for Eris.
+  Implements the Discord API wrapped for Elixir
   """
+
+
+  def new_client connection_opts do
+  end
 
   @doc """
   Hello world.
