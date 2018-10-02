@@ -1,5 +1,9 @@
 defmodule Eris.Entities.User do
-@typedoc"""
+@moduledoc """
+ Eris.Entities.User - defines a Discord User in concrete Elixir types
+"""
+
+@typedoc """
 Eris.Entities.User - defines a Discord user object
   Fields:
     * id: Eris.Entities.Snowflake - the user's id
@@ -32,7 +36,7 @@ end
 defimpl Poison.Decoder, for: Eris.Entities.User do
   def decode(%{id: id} = user, _options) do
     case Eris.Entities.Snowflake.from_string(id) do
-      {:ok, snowflake} -> %{user | id: snowflake}
+      {:ok, snowflake} -> {:ok, %{user | id: snowflake}}
       {:error, _} -> {:error, :invalid_snowflake}
     end
   end

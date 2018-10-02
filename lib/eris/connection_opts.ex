@@ -1,5 +1,5 @@
 defmodule Eris.ConnectionOpts do
-@typedoc"""
+@typedoc """
 Defines the connection options we can use to start a session with Discord
 Parameters:
  * url - the Discord API URL to hit

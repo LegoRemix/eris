@@ -1,7 +1,7 @@
 require OK
 defmodule Eris.RestClient do
   use Agent
-  @moduledoc"""
+  @moduledoc """
   Eris.RestClient provides an Elixir wrapper around the Discord API
   """
 
@@ -64,12 +64,12 @@ defmodule Eris.RestClient do
     end
   end
 
-  @doc"""
+  @doc """
     get_current_user - fetches the user associated with the token used to create this RestClient
     Parameters:
-      * client_pid  pid representing this client
+      * client_pid: pid.t - pid representing this client
   """
-  @spec get_current_user(pid) :: {:ok, any} | {:error, any}
+  @spec get_current_user(pid) :: {:ok, Eris.Entities.User.t} | {:error, atom}
   def get_current_user(client_pid) do
     OK.for do
       {base_url, headers} <- get_connection_info client_pid
@@ -82,4 +82,22 @@ defmodule Eris.RestClient do
     end
   end
 
+  @doc """
+    get_user - fetches a user with a given snowflake id
+    Parameter:
+      * client_pid: pid.t - pid for the client
+      * snowflake_id: Eris.Entities.Snowflake.t  - snowflake id for the target user
+  """
+  @spec get_user(pid, Eris.Entities.Snowflake.t) :: {:ok, Eris.Entities.User.t} | {:error, atom}
+  def get_user(client_pid, user_id) do
+    OK.for do
+      {base_url, headers} <- get_connection_info client_pid
+      target_url = Path.join(base_url, "/users/#{Eris.Entities.Snowflake.to_string(user_id)}")
+      response <- HTTPoison.get(target_url, headers)
+      body <- handle_response response
+      user <- Poison.decode(body, as: %Eris.Entities.User{})
+    after
+      user
+    end
+  end
 end
