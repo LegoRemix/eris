@@ -23,6 +23,7 @@ defmodule Eris.MixProject do
     [ {:poison, "~> 3.1"},
       {:httpoison, "~> 1.0"},
       {:ok, "~> 2.0"},
+      {:exdatauri, "~> 0.2.0"},
     ]
   end
 end

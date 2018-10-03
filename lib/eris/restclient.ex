@@ -84,7 +84,7 @@ defmodule Eris.RestClient do
 
   @doc """
     get_user - fetches a user with a given snowflake id
-    Parameter:
+    Parameters:
       * client_pid: pid.t - pid for the client
       * snowflake_id: Eris.Entities.Snowflake.t  - snowflake id for the target user
   """
@@ -100,4 +100,37 @@ defmodule Eris.RestClient do
       user
     end
   end
+
+  @doc """
+    modify_current_user - attempts to update the current user, allowing either avatar or username changes
+    Parameters:
+      * client_pid - pid for the running client
+      * username - the new username for this user
+      * avatar - the new avatar for this user
+  """
+  @spec modify_current_user(pid, String.t | nil,
+   Eris.Entities.ImageData.t | nil) :: {:ok, Eris.Entities.User.t} | {:error, atom}
+  def modify_current_user(client_pid, username \\ nil, avatar \\ nil) do
+    OK.for do
+      {base_url, headers} <- get_connection_info client_pid
+      data = case {username, avatar} do
+        {x, y} when x in ["", nil] and y in [nil, %Eris.Entities.ImageData{}] -> %{}
+        {x, y} when x in ["", nil] -> %{"avatar" => y}
+        {x, y} when y in [nil, %Eris.Entities.ImageData{}] -> %{"username" => x}
+        _ -> %{"username" => username, "avatar" => avatar}
+      end
+      target_url = Path.join(base_url, "/users/@me")
+      payload <- Poison.encode(data)
+      response <- HTTPoison.patch(target_url, payload, headers)
+      body <- handle_response response
+      user <- Poison.decode(body, as: %Eris.Entities.User{})
+    after
+      user
+    end
+  end
+
+
+
+
+
 end

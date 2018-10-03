@@ -51,3 +51,9 @@ defmodule Eris.Entities.Snowflake do
     Integer.to_string (ms_since_epoch <<< 22) + (snowflake.worker <<< 17) + (snowflake.process <<< 12) + snowflake.increment
   end
 end
+
+defimpl Poison.Encoder, for: Eris.Entities.Snowflake do
+  def encode(snowflake, options) do
+    Poison.Encoder.BitString.encode(Eris.Entities.Snowflake.to_string(snowflake), options)
+  end
+end
