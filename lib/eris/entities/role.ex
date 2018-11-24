@@ -1,8 +1,6 @@
 defmodule Eris.Entities.Role do
  @moduledoc """
   Eris.Entities.Role - represents a Discord Role as an elixir object
-  IMPORTANT - Colors are represented as hex color codes in memory, but integers
-  on the wire
  """
 
   @typedoc """
@@ -10,7 +8,7 @@ defmodule Eris.Entities.Role do
    Fields:
    * id: Eris.Snowflake.t - the snowflake id for this role
    * name: String.t - the name of this role
-   * color: String.t - integer representation of the hex color (0 == no color)
+   * color: integer - integer representation of this color the hex color code (0 == no color)
    * hoist: boolean - is this role pinned in the user listing
    * position: integer - the position of this role
    * permissions: integer - the permissions bits given by this role
@@ -33,20 +31,10 @@ end
 
 
 defimpl Poison.Decoder, for: Eris.Entities.Role do
-  def decode(%{id: id, color: color} = role, _options) do
+  def decode(%{id: id} = role, _options) do
     case Eris.Entities.Snowflake.from_string(id) do
-      {:ok, snowflake} -> {:ok, %{role | id: snowflake, color: Integer.to_string(color, 16)}}
+      {:ok, snowflake} -> {:ok, %{role | id: snowflake}}
       {:error, _} -> {:error, :invalid_snowflake}
-    end
-  end
-end
-
-
-defimpl Poison.Encoder, for: Eris.Entities.Role do
-  def encode(role, options) do
-    case Integer.parse(role.color, 16) do
-      :error -> {:error, :invalid_color_code}
-      {color, _} -> Poison.Encoder.Map.encode(%Eris.Entities.Role{role | color: color}, options)
     end
   end
 end
